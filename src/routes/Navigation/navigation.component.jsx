@@ -1,12 +1,16 @@
 import { Link, Outlet } from 'react-router-dom';
+import crown from '../../assets/crown.svg';
+import './navigation.style.scss';
+// logo ကို component ပုံစံခေါ်လို့ရအောင်ရေးတာ (CRA မှာပဲအလုပ်လုပ်)
 
 const Navigation = () => {
   return (
     <>
       <div className='navigation'>
-        <div className="nav-logo-container"><Link to='/'>LOGO</Link></div>
+        <Link className="nav-logo-container" to='/'><img src={crown} alt="" /></Link>
         <div className="nav-links-container">
-            <Link to='/shop'>Shop</Link>
+            <Link className="nav-link" to='/shop'>Shop</Link>
+            <Link className="nav-link" to='/signin'>Sign In</Link>
         </div>
       </div>
       <Outlet/>
