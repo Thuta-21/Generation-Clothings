@@ -4,6 +4,7 @@ import {
   signInWithRedirect,
   signInWithPopup,
   GoogleAuthProvider,
+  createUserWithEmailAndPassword
 } from "firebase/auth";
 
 import { getFirestore, doc, setDoc, getDoc  } from "firebase/firestore";
@@ -26,12 +27,17 @@ provider.setCustomParameters({
 });
 
 export const auth = getAuth();
+// auth က ငါတို့ authentication လုပ်တဲ့ဟာတွေကိုခြေရာခံပြီး မှတ်ပေးထားတဲ့ memory bank လိုပဲ။
 
 export const signInWithGooglePopup = () => signInWithPopup(auth, provider);
+export const signInWithGoogleRedirect = () => signInWithRedirect(auth, provider);
 
 export const db = getFirestore();
 
-export const createUserDocumentFromAuth = async (userAuth) => {
+export const createUserDocumentFromAuth = async (userAuth, addtionalInfo={}) => {
+
+  if(!userAuth) return;
+
   const userDocRef = doc(db, 'users', userAuth.uid); // google ကပြန်ပို့လိုက်တဲ့ထဲမှာ uid က unique ဖြစ်တယ်။
   // db name, collection name, unique identifier(users collection ထဲက ဒီ unique id ရှိတဲ့docကိုညွှန်ပြတယ်)
 
@@ -46,7 +52,8 @@ export const createUserDocumentFromAuth = async (userAuth) => {
       await setDoc(userDocRef, {
         displayName,
         email,
-        createdAt
+        createdAt,
+        ...addtionalInfo
       })
     } catch(err) {
       console.log('error created the user', err);
@@ -54,4 +61,9 @@ export const createUserDocumentFromAuth = async (userAuth) => {
   }
 
   return userDocRef;
+}
+
+export const createAuthWithEmailPassword = async (email, password) => {
+  if(!email || !password) return;
+  return await createUserWithEmailAndPassword(auth, email, password);
 }
