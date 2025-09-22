@@ -22,14 +22,14 @@ const SignUp = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!password === confirmPassword) {
+        if (password !== confirmPassword) {
             alert('Password do no match');
             return;
         }
         
         try {
             const {user} = await createAuthWithEmailPassword(email, password);
-            const userDocRef = await createUserDocumentFromAuth(user, {displayName});
+            await createUserDocumentFromAuth(user, {displayName});
             resetForm();
             alert('Successfully Sign Up');
         } catch(err) {

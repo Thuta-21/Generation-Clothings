@@ -22,7 +22,6 @@ const SignIn = () => {
 
         try {
             const {user} = await signInUserWithEmailAndPassword(email, password);
-            console.log(user);
             resetForm();
         } catch(err) {
             if(err.code === 'auth/invalid-credential') {
@@ -39,8 +38,7 @@ const SignIn = () => {
     }
 
     const signInwithGoogle = async () => {
-        const { user } = await signInWithGooglePopup();
-        await createUserDocumentFromAuth(user);
+        await signInWithGooglePopup();
     };
 
     return (
