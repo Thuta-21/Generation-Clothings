@@ -1,8 +1,8 @@
 import { useState } from "react"
-import { createUserDocumentFromAuth, signInWithGooglePopup, signInUserWithEmailAndPassword } from "../../utilities/firebase/firebase.utilis";
+import { signInWithGooglePopup, signInUserWithEmailAndPassword } from "../../utilities/firebase/firebase.utilis";
 import FormInput from "../form-input/form-input.component";
-import Button from "../Botton/button.compoent";
-import './signin.style.scss';
+import Button, {BUTTON_TYPE_CLASSES} from "../Botton/button.compoent";
+import {SigninContainer, BtnContainer} from './signin.style';
 
 const defaultSignInForm = {
     email: '',
@@ -21,7 +21,7 @@ const SignIn = () => {
         e.preventDefault();
 
         try {
-            const {user} = await signInUserWithEmailAndPassword(email, password);
+            await signInUserWithEmailAndPassword(email, password);
             resetForm();
         } catch(err) {
             if(err.code === 'auth/invalid-credential') {
@@ -42,18 +42,18 @@ const SignIn = () => {
     };
 
     return (
-        <div className="signin-container">
+        <SigninContainer>
             <h2>Already have an account?</h2>
             <span>Sign In with your email and password</span>
             <form onSubmit={handleSubmit}>
                 <FormInput label='Email' type="email" name="email" onChange={handleChange} value={email} required/>
                 <FormInput label='Password' type="password" name="password" onChange={handleChange} value={password} required/>
-                <div className="buttons-container">
+                <BtnContainer>
                     <Button type="submit">Sign In</Button>
-                    <Button buttonType='google' type='button' onClick={signInwithGoogle}>Google Sign In</Button>
-                </div>
+                    <Button buttonType={BUTTON_TYPE_CLASSES.google} type='button' onClick={signInwithGoogle}>Google Sign In</Button>
+                </BtnContainer>
             </form>
-        </div>
+        </SigninContainer>
     )
 }
 

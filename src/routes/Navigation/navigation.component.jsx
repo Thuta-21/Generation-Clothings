@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { UserContext } from '../../contexts/user.context';
 import { Link, Outlet } from 'react-router-dom';
 import crown from '../../assets/crown.svg';
-import './navigation.style.scss';
+import { NavContainer, NavLogo, NavLinksContainer, NavLink } from './navigation.style.jsx';
 import { signOutUser } from '../../utilities/firebase/firebase.utilis';
 // logo ကို component ပုံစံခေါ်လို့ရအောင်ရေးတာ (CRA မှာပဲအလုပ်လုပ်)
 import CartIcon from '../../components/cart-icon/cart-icon.component';
@@ -11,20 +11,21 @@ import { CartContext } from '../../contexts/cart.context';
 
 const Navigation = () => {
   const { currentUser } = useContext(UserContext);
-  const { isDropdown } = useContext(CartContext)
+  const { isDropdownOpen } = useContext(CartContext);
+
   return (
     <>
-      <div className='navigation'>
-        <Link className="nav-logo-container" to='/'><img src={crown} alt="" /></Link>
-        <div className="nav-links-container">
-            <Link className="nav-link" to='/shop'>Shop</Link>
+      <NavContainer>
+        <NavLogo to='/'><img src={crown} alt="" /></NavLogo>
+        <NavLinksContainer>
+            <NavLink to='/shop'>Shop</NavLink>
             {currentUser 
-            ? <span className='nav-link' onClick={signOutUser}>Sign Out</span> 
-            : <Link className="nav-link" to='/auth'>Sign In</Link> }
+            ? <NavLink as='span' onClick={signOutUser}>Sign Out</NavLink> 
+            : <NavLink to='/auth'>Sign In</NavLink> }
             <CartIcon/>
-        </div>
-        {isDropdown && <CartDropdown/>}
-      </div>
+        </NavLinksContainer>
+        {isDropdownOpen && <CartDropdown/>}
+      </NavContainer>
       <Outlet/>
     </>
   )

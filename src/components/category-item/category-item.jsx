@@ -1,19 +1,28 @@
 import React from "react";
-import "./category-item.style.scss";
+import {
+  BackgroundImage,
+  CategoryItemContainer,
+  CategoryItemBody,
+} from "./category-item.style.jsx";
+import { useNavigate } from "react-router-dom";
 
 const CategoryItem = ({ category }) => {
-  const { imageUrl, title } = category;
+  const { imageUrl, title, route } = category;
+
+  const navigate = useNavigate();
+  const goSpecificCategory = () => {
+    navigate(route);
+  };
+
   return (
-    <div className="category-container">
-      <div
-        className="background-image"
-        style={{ backgroundImage: `url(${imageUrl})` }}
-      />
-      <div className="category-body-container">
+    <CategoryItemContainer onClick={goSpecificCategory}>
+      <BackgroundImage imageUrl={imageUrl} />
+      {/* styled component ဘက်ကို url pass လုပ်လိုက်တာ */}
+      <CategoryItemBody>
         <h2>{title}</h2>
         <p>Shop Now</p>
-      </div>
-    </div>
+      </CategoryItemBody>
+    </CategoryItemContainer>
   );
 };
 

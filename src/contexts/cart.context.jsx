@@ -1,48 +1,98 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState } from "react";
 
 const addCartItem = (cartItems, productToAdd) => {
-    // find if cartItem contain producttoAdd
-    const existingCartItem = cartItems.find(item => 
-        item.id === productToAdd.id
+  const existingCartItem = cartItems.find(
+    (item) => item.id === productToAdd.id
+  );
+
+  // If the item exists, increment its quantity
+  if (existingCartItem) {
+    return cartItems.map((item) =>
+      item.id === productToAdd.id
+        ? { ...item, quantity: item.quantity + 1 }
+        : item
     );
+  }
 
-    if (existingCartItem) {
-        return cartItems.map(item => 
-            item.id === productToAdd.id
-            ? {...item, quantity: item.quantity+1}
-            : item);
-    }
+  // If the item is new, add it to the cart with a quantity of 1
+  return [...cartItems, { ...productToAdd, quantity: 1 }];
+};
 
-    return [...cartItems, {...productToAdd, quantity:1}]
-    // if found increase quantity
+const removeCartItem = (cartItems, cartItemToRemove) => {
+  const existingCartItem = cartItems.find(
+    (item) => item.id === cartItemToRemove.id
+  );
 
-    // return new array with modified cartItem/new cartItem
+  // If the item's quantity is 1, filter it out completely
+  if (existingCartItem?.quantity === 1) {
+    return cartItems.filter((item) => item.id !== cartItemToRemove.id);
+  }
 
-}
+  // Otherwise, return the array with the item's quantity decreased
+  return cartItems.map((item) =>
+    item.id === cartItemToRemove.id
+      ? { ...item, quantity: item.quantity - 1 }
+      : item
+  );
+};
 
+const clearCartItem = (cartItems, cartItemToClear) => {
+  return cartItems.filter((item) => item.id !== cartItemToClear.id);
+};
+
+// --- Context Definition ---
 export const CartContext = createContext({
-    isDropdown: false,
-    setContext: () => {},
-    cartItems: [],
-    addItemToCart: () => {},
-    cartCount: 0
+  isDropdownOpen: false,
+  setIsDropdownOpen: () => {},
+  cartItems: [],
+  addItemToCart: () => {},
+  removeItemFromCart: () => {},
+  clearItemFromCart: () => {},
+  cartCount: 0,
+  cartTotal: 0,
 });
 
-export const CartProvider = ({children}) => {
-    const [isDropdown, setContext] = useState(false);
-    const [cartItems, setCartItems] = useState([]);
-    const [cartCount, setcartCount] = useState(0);
+// --- Provider Component ---
+export const CartProvider = ({ children }) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
 
-    useEffect(()=>{
-        const cartCount = cartItems.reduce((total, cartItem)=>{ return total + cartItem.quantity }, 0)
-        setcartCount(cartCount);
-    },[cartItems]);
+  // --- Derived State Calculation ---
+  // These values are calculated on every render from the cartItems state.
+  // This is more efficient than using useEffect and separate state variables.
+  const cartCount = cartItems.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
 
-    const addItemToCart = (productToAdd) => {
-        setCartItems(addCartItem(cartItems, productToAdd))
-    }
+  const cartTotal = cartItems.reduce(
+    (total, item) => total + item.quantity * item.price,
+    0
+  );
 
-    const value = {isDropdown, setContext, addItemToCart, cartItems, cartCount}
-    
-    return <CartContext.Provider value={value}>{children}</CartContext.Provider>
-}
+  // --- Cart Management Functions ---
+  const addItemToCart = (product) => {
+    setCartItems(addCartItem(cartItems, product));
+  };
+
+  const removeItemFromCart = (cartItem) => {
+    setCartItems(removeCartItem(cartItems, cartItem));
+  };
+
+  const clearItemFromCart = (cartItem) => {
+    setCartItems(clearCartItem(cartItems, cartItem));
+  };
+
+  const value = {
+    isDropdownOpen,
+    setIsDropdownOpen,
+    cartItems,
+    addItemToCart,
+    removeItemFromCart,
+    clearItemFromCart,
+    cartCount,
+    cartTotal,
+  };
+
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
+};

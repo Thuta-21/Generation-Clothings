@@ -7,10 +7,19 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged
+  onAuthStateChanged,
 } from "firebase/auth";
 
-import { getFirestore, doc, setDoc, getDoc  } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  collection,
+  writeBatch,
+  query,
+  getDocs
+} from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCPKEPoHHd21H8LLoby2bkXVT1w1TQNjzM",
@@ -26,29 +35,59 @@ const firebaseApp = initializeApp(firebaseConfig);
 
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({
-    prompt: "select_account"
+  prompt: "select_account",
 });
 
 export const auth = getAuth();
 // auth က ငါတို့ authentication လုပ်တဲ့ဟာတွေကိုခြေရာခံပြီး မှတ်ပေးထားတဲ့ memory bank လိုပဲ။
 
 export const signInWithGooglePopup = () => signInWithPopup(auth, provider);
-export const signInWithGoogleRedirect = () => signInWithRedirect(auth, provider);
+export const signInWithGoogleRedirect = () =>
+  signInWithRedirect(auth, provider);
 
 export const db = getFirestore();
 
-export const createUserDocumentFromAuth = async (userAuth, addtionalInfo={}) => {
+export const addCollectionAndDoc = async (collectionKey, objectToAdd) => {
+  const colllectionRef = collection(db, collectionKey);
+  const batch = writeBatch(db);
 
-  if(!userAuth) return;
+  objectToAdd.map((object) => {
+    const docRef = doc(colllectionRef, object.title.toLowerCase());
+    batch.set(docRef, object);
+  });
 
-  const userDocRef = doc(db, 'users', userAuth.uid); // google ကပြန်ပို့လိုက်တဲ့ထဲမှာ uid က unique ဖြစ်တယ်။
+  await batch.commit();
+  console.log("done");
+};
+
+export const getCategoriesAndDocs = async () => {
+  const colllectionRef = collection(db, "categories");
+  const q = query(colllectionRef);
+  
+  const querySnapshot = await getDocs(q);
+  const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot) => {
+    const {title, items} = docSnapshot.data();
+    acc[title.toLowerCase()] = items;
+    return acc;
+  }, {});
+
+  return categoryMap;
+};
+
+export const createUserDocumentFromAuth = async (
+  userAuth,
+  addtionalInfo = {}
+) => {
+  if (!userAuth) return;
+
+  const userDocRef = doc(db, "users", userAuth.uid); // google ကပြန်ပို့လိုက်တဲ့ထဲမှာ uid က unique ဖြစ်တယ်။
   // db name, collection name, unique identifier(users collection ထဲက ဒီ unique id ရှိတဲ့docကိုညွှန်ပြတယ်)
 
   const userSnapShot = await getDoc(userDocRef);
   // snapshop ဆိုတာ dataပဲ။ specific object
 
-  if(!userSnapShot.exists()) {
-    const {displayName, email} = userAuth;
+  if (!userSnapShot.exists()) {
+    const { displayName, email } = userAuth;
     const createdAt = new Date();
 
     try {
@@ -56,26 +95,27 @@ export const createUserDocumentFromAuth = async (userAuth, addtionalInfo={}) => 
         displayName,
         email,
         createdAt,
-        ...addtionalInfo
-      })
-    } catch(err) {
-      console.log('error created the user', err);
+        ...addtionalInfo,
+      });
+    } catch (err) {
+      console.log("error created the user", err);
     }
   }
 
   return userDocRef;
-}
+};
 
 export const createAuthWithEmailPassword = async (email, password) => {
-  if(!email || !password) return;
+  if (!email || !password) return;
   return await createUserWithEmailAndPassword(auth, email, password);
-}
+};
 
 export const signInUserWithEmailAndPassword = async (email, password) => {
-  if(!email || !password) return;
-  return  await signInWithEmailAndPassword(auth, email, password);
-}
+  if (!email || !password) return;
+  return await signInWithEmailAndPassword(auth, email, password);
+};
 
 export const signOutUser = async () => await signOut(auth);
 
-export const onAuthStateChangedListener = async (callback) => onAuthStateChanged(auth, callback);
+export const onAuthStateChangedListener = async (callback) =>
+  onAuthStateChanged(auth, callback);

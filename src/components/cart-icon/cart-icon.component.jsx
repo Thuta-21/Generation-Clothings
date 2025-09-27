@@ -1,18 +1,18 @@
-import './cart-icon.style.scss';
+import { CartIconContainer, ShoppingIcon, ItemCount } from './cart-icon.style.jsx';
 import { useContext } from 'react';
 import cartIconSVG from '../../assets/shopping-bag.svg';
 import { CartContext } from '../../contexts/cart.context';
-
+   
 const CartIcon = () => {
-    const { isDropdown, setContext, cartCount } = useContext(CartContext);
+    const { isDropdownOpen, setIsDropdownOpen, cartCount } = useContext(CartContext);
 
-    const chageCart = () => {setContext(!isDropdown)}
+    const controlDropdown = () => {setIsDropdownOpen(!isDropdownOpen)}
 
     return (
-        <div className='cart-icon-container' onClick={chageCart}>
-            <img className='shopping-icon' src={cartIconSVG} alt="cart-icon" />
-            <span className='item-count'>{cartCount ? cartCount: 0}</span>
-        </div>
+        <CartIconContainer onClick={controlDropdown}>
+            <ShoppingIcon src={cartIconSVG} alt="cart-icon" />
+            <ItemCount>{cartCount ? cartCount: 0}</ItemCount>
+        </CartIconContainer>
     )
 }
 
