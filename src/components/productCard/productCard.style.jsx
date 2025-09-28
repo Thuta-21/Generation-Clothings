@@ -7,6 +7,7 @@ export const ProductCardContainer = styled.div`
   height: 350px;
   align-items: center;
   position: relative;
+  margin-bottom: 20px;
 
   img {
     width: 100%;
@@ -33,6 +34,7 @@ export const ProductCardContainer = styled.div`
       display: flex;
     }
   }
+
 `;
 
 export const Footer = styled.div`
