@@ -16,7 +16,7 @@ const CategoryItem = ({ category }) => {
 
   return (
     <CategoryItemContainer onClick={goSpecificCategory}>
-      <BackgroundImage imageUrl={imageUrl} />
+      <BackgroundImage $imageurl={imageUrl} />
       {/* styled component ဘက်ကို url pass လုပ်လိုက်တာ */}
       <CategoryItemBody>
         <h2>{title}</h2>

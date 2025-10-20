@@ -1,11 +1,11 @@
-import { createContext, useState } from "react";
+import { createContext, useReducer } from "react";
+import { createAction } from "../utilities/reducer/reducer.utils";
 
 const addCartItem = (cartItems, productToAdd) => {
   const existingCartItem = cartItems.find(
     (item) => item.id === productToAdd.id
   );
 
-  // If the item exists, increment its quantity
   if (existingCartItem) {
     return cartItems.map((item) =>
       item.id === productToAdd.id
@@ -14,7 +14,6 @@ const addCartItem = (cartItems, productToAdd) => {
     );
   }
 
-  // If the item is new, add it to the cart with a quantity of 1
   return [...cartItems, { ...productToAdd, quantity: 1 }];
 };
 
@@ -23,12 +22,10 @@ const removeCartItem = (cartItems, cartItemToRemove) => {
     (item) => item.id === cartItemToRemove.id
   );
 
-  // If the item's quantity is 1, filter it out completely
   if (existingCartItem?.quantity === 1) {
     return cartItems.filter((item) => item.id !== cartItemToRemove.id);
   }
 
-  // Otherwise, return the array with the item's quantity decreased
   return cartItems.map((item) =>
     item.id === cartItemToRemove.id
       ? { ...item, quantity: item.quantity - 1 }
@@ -52,35 +49,80 @@ export const CartContext = createContext({
   cartTotal: 0,
 });
 
+const CART_ACTION_TYPES = {
+  SET_CART_ITEMS: "SET_CART_ITEMS",
+  TOGGLE_DROPDOWN: "TOGGLE_DROPDOWN",
+};
+
+const INITIAL_STATE = {
+  cartCount: 0,
+  cartTotal: 0,
+  cartItems: [],
+  isDropdownOpen: false,
+};
+
+export const cartReducer = (state, action) => {
+  const { type, payload } = action;
+
+  switch (type) {
+    case CART_ACTION_TYPES.SET_CART_ITEMS:
+      return {
+        ...state,
+        ...payload,
+      };
+    case CART_ACTION_TYPES.TOGGLE_DROPDOWN:
+      return {
+        ...state,
+        isDropdownOpen: payload,
+      };
+    default:
+      throw new Error(`unhandled type of ${type} in cartReducer`);
+  }
+};
+
 // --- Provider Component ---
 export const CartProvider = ({ children }) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [cartItems, setCartItems] = useState([]);
+  const [{ cartItems, cartCount, cartTotal, isDropdownOpen }, dispatch] =
+    useReducer(cartReducer, INITIAL_STATE);
 
-  // --- Derived State Calculation ---
-  // These values are calculated on every render from the cartItems state.
-  // This is more efficient than using useEffect and separate state variables.
-  const cartCount = cartItems.reduce(
-    (total, item) => total + item.quantity,
-    0
-  );
+  const updateCartItemReducer = (newCartItems) => {
+    const newCartCount = newCartItems.reduce(
+      (total, item) => total + item.quantity,
+      0
+    );
 
-  const cartTotal = cartItems.reduce(
-    (total, item) => total + item.quantity * item.price,
-    0
-  );
+    const newCartTotal = newCartItems.reduce(
+      (total, item) => total + item.quantity * item.price,
+      0
+    );
+
+    dispatch(
+      createAction(CART_ACTION_TYPES.SET_CART_ITEMS, {
+        cartItems: newCartItems,
+        cartCount: newCartCount,
+        cartTotal: newCartTotal,
+      })
+    );
+  };
 
   // --- Cart Management Functions ---
   const addItemToCart = (product) => {
-    setCartItems(addCartItem(cartItems, product));
+    const newCartItems = addCartItem(cartItems, product);
+    updateCartItemReducer(newCartItems);
   };
 
   const removeItemFromCart = (cartItem) => {
-    setCartItems(removeCartItem(cartItems, cartItem));
+    const newCartItems = removeCartItem(cartItems, cartItem);
+    updateCartItemReducer(newCartItems);
   };
 
   const clearItemFromCart = (cartItem) => {
-    setCartItems(clearCartItem(cartItems, cartItem));
+    const newCartItems = clearCartItem(cartItems, cartItem);
+    updateCartItemReducer(newCartItems);
+  };
+
+  const setIsDropdownOpen = (bool) => {
+    dispatch({ type: CART_ACTION_TYPES.TOGGLE_DROPDOWN, payload: bool });
   };
 
   const value = {

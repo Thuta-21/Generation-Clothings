@@ -1,12 +1,15 @@
 import { CartIconContainer, ShoppingIcon, ItemCount } from './cart-icon.style.jsx';
-import { useContext } from 'react';
 import cartIconSVG from '../../assets/shopping-bag.svg';
-import { CartContext } from '../../contexts/cart.context';
-   
-const CartIcon = () => {
-    const { isDropdownOpen, setIsDropdownOpen, cartCount } = useContext(CartContext);
+import { useSelector, useDispatch } from 'react-redux';
+import { selectCartCount, selectIsCartOpen } from '../../store/cart/cart.selector.jsx';
+import { setIsCartOpen } from '../../store/cart/cart.actions.jsx';
 
-    const controlDropdown = () => {setIsDropdownOpen(!isDropdownOpen)}
+const CartIcon = () => {
+    const dispatch = useDispatch();
+    const isDropdownOpen = useSelector(selectIsCartOpen);
+    const cartCount = useSelector(selectCartCount);
+
+    const controlDropdown = () => {dispatch(setIsCartOpen(!isDropdownOpen))}
 
     return (
         <CartIconContainer onClick={controlDropdown}>

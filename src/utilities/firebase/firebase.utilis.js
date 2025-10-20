@@ -31,7 +31,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const firebaseApp = initializeApp(firebaseConfig);
+export const firebaseApp = initializeApp(firebaseConfig);
 
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({
@@ -65,13 +65,7 @@ export const getCategoriesAndDocs = async () => {
   const q = query(colllectionRef);
   
   const querySnapshot = await getDocs(q);
-  const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot) => {
-    const {title, items} = docSnapshot.data();
-    acc[title.toLowerCase()] = items;
-    return acc;
-  }, {});
-
-  return categoryMap;
+  return querySnapshot.docs.map(docSnapshot => docSnapshot.data());
 };
 
 export const createUserDocumentFromAuth = async (
@@ -102,7 +96,7 @@ export const createUserDocumentFromAuth = async (
     }
   }
 
-  return userDocRef;
+  return userSnapShot;
 };
 
 export const createAuthWithEmailPassword = async (email, password) => {
@@ -119,3 +113,15 @@ export const signOutUser = async () => await signOut(auth);
 
 export const onAuthStateChangedListener = async (callback) =>
   onAuthStateChanged(auth, callback);
+
+export const getCurrentUser = () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      (userAuth) => {unsubscribe(), resolve(userAuth)},
+      reject
+    )
+  })
+}
+
+// onAuthStateChanged(auth, callback(run if success), callback(run if error));
