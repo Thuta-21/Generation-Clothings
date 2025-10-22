@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { SpinnerContainer } from "../spinner/spinner.style";
 
 export const BaseButton = styled.button`
   min-width: 165px;
@@ -18,6 +19,7 @@ export const BaseButton = styled.button`
   cursor: pointer;
   display: flex;
   justify-content: center;
+  align-items: center;
 
   &:hover {
     background-color: white;
@@ -47,3 +49,10 @@ export const InvertedButton = styled(BaseButton)`
       border: none;
     }
 `;
+
+export const ButtonSpinner = styled(SpinnerContainer)`
+  height: 30px;
+  width: 30px;
+  border: 3px solid rgba(255, 255, 255, 0.97);
+  border-top-color: #020202ff;
+`
