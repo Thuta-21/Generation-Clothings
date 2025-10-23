@@ -11,6 +11,7 @@ export const NavContainer = styled.div`
   top:0;
   z-index:5;
   background-color: rgba(255,255,255, 0.9);
+  backdrop-filter: blur(3px);
 
     @media only screen and (max-width: 700px) {
         & {

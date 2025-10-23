@@ -1,7 +1,12 @@
 import { useState } from "react";
 import FormInput from "../form-input/form-input.component";
 import Button, { BUTTON_TYPE_CLASSES } from "../Botton/button.compoent";
-import { SigninContainer, BtnContainer } from "./signin.style";
+import {
+  SigninContainer,
+  BtnContainer,
+  SignInBtn,
+  SignInGoogleBtn,
+} from "./signin.style";
 import { useDispatch } from "react-redux";
 import {
   emailSiginInStart,
@@ -41,7 +46,7 @@ const SignIn = () => {
   };
 
   return (
-    <SigninContainer>
+    <SigninContainer id="signin">
       <h2>Already have an account?</h2>
       <span>Sign In with your email and password</span>
       <form onSubmit={handleSubmit}>
@@ -62,16 +67,36 @@ const SignIn = () => {
           required
         />
         <BtnContainer>
-          <Button type="submit">Sign In</Button>
-          <Button
+          <SignInBtn type="submit">Sign In</SignInBtn>
+          <SignInGoogleBtn
             buttonType={BUTTON_TYPE_CLASSES.google}
             type="button"
             onClick={signInwithGoogle}
           >
             Google Sign In
-          </Button>
+          </SignInGoogleBtn>
         </BtnContainer>
       </form>
+      <p style={{textAlign: 'center'}}>
+        {" "}
+        Haven't account?{" "}
+        <span
+          style={{
+            cursor: "pointer",
+            textDecoration: "underline",
+            color: "blue",
+          }}
+          onClick={() => {
+            const siginIn = document.getElementById("signin");
+            const signup = document.getElementById("signup");
+            siginIn.style.display = "none";
+            signup.style.display = "block";
+          }}
+        >
+          {" "}
+          Sign Up{" "}
+        </span>
+      </p>
     </SigninContainer>
   );
 };
