@@ -32,7 +32,7 @@ export const BtnContainer = styled.div`
 export const SignInBtn = styled(BaseButton)`
       @media only screen and (max-width: 700px) {
         & {
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   min-width: 80px;
   width: auto;
 
@@ -43,8 +43,8 @@ export const SignInBtn = styled(BaseButton)`
 export const SignInGoogleBtn = styled(GoogleButton)`
       @media only screen and (max-width: 700px) {
         & {
-  font-size: 0.6rem;
-  min-width: 70px;
+  font-size: 0.8rem;
+  min-width: 80px;
   width: auto;
 
     }
