@@ -12,12 +12,18 @@ const Payment = () => {
   const amount = useSelector(selectCartTotal);
   const CurrentUser = useSelector(user);
   const [isProcessPayment, setisProcessPayment] = useState(false);
+
   const paymentHandler = async (e) => {
     e.preventDefault();
 
-    if (!stripe || !elements) {
+    if (!stripe || !elements || !amount) {
       return;
     }
+
+    if (!CurrentUser) {
+      return alert('Please Sign in to order.');
+    }
+
     setisProcessPayment(true);
     const response = await fetch("/.netlify/functions/create-payment-intent", {
       method: "post",
@@ -28,7 +34,6 @@ const Payment = () => {
     }).then((res) => res.json());
 
     const {paymentIntent: {client_secret}} = response;
-    console.log('user', CurrentUser)
     const paymentReslut = await stripe.confirmCardPayment(client_secret, {
       payment_method: {
         card: elements.getElement(CardElement),
@@ -41,7 +46,7 @@ const Payment = () => {
     setisProcessPayment(false);
 
     if (paymentReslut.error) {
-      alert('error', paymentReslut.error)
+      alert('Something went wrong!')
       console.log(paymentReslut.error)
     } else {
       if (paymentReslut.paymentIntent.status === 'succeeded') {
