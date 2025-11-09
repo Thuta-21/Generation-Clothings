@@ -4,7 +4,7 @@ import "./index.scss";
 import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
-import { store, persistor } from "./store/store.jsx";
+import { store, persistor } from "./store/store";
 import { PersistGate } from "redux-persist/integration/react";
 import { Elements } from "@stripe/react-stripe-js";
 import { stripePromise } from "./utilities/stripe/stripe.utils.jsx";

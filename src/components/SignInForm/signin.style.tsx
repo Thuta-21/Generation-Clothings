@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { BaseButton, GoogleButton } from "../Botton/button.style";
-
+import { ButtonProps } from "../Botton/button.compoent";
 export const SigninContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -40,7 +40,7 @@ export const SignInBtn = styled(BaseButton)`
 
 `;
 
-export const SignInGoogleBtn = styled(GoogleButton)`
+export const SignInGoogleBtn = styled(GoogleButton)<ButtonProps>`
       @media only screen and (max-width: 700px) {
         & {
   font-size: 0.8rem;

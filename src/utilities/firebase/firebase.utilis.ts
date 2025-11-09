@@ -8,6 +8,8 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  User,
+  NextOrObserver,
 } from "firebase/auth";
 
 import {
@@ -18,8 +20,11 @@ import {
   collection,
   writeBatch,
   query,
-  getDocs
+  getDocs,
+  QueryDocumentSnapshot,
 } from "firebase/firestore";
+
+import { Category } from "../../store/categories/category.types";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCPKEPoHHd21H8LLoby2bkXVT1w1TQNjzM",
@@ -47,7 +52,14 @@ export const signInWithGoogleRedirect = () =>
 
 export const db = getFirestore();
 
-export const addCollectionAndDoc = async (collectionKey, objectToAdd) => {
+export type ObjectToAdd = {
+  title: string;
+};
+
+export const addCollectionAndDoc = async <T extends ObjectToAdd>(
+  collectionKey: string,
+  objectToAdd: T[]
+): Promise<void> => {
   const colllectionRef = collection(db, collectionKey);
   const batch = writeBatch(db);
 
@@ -60,18 +72,30 @@ export const addCollectionAndDoc = async (collectionKey, objectToAdd) => {
   console.log("done");
 };
 
-export const getCategoriesAndDocs = async () => {
+export const getCategoriesAndDocs = async (): Promise<Category[]> => {
   const colllectionRef = collection(db, "categories");
   const q = query(colllectionRef);
-  
+
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map(docSnapshot => docSnapshot.data());
+  return querySnapshot.docs.map(
+    (docSnapshot) => docSnapshot.data() as Category
+  );
+};
+
+export type AdditonalInfo = {
+  displayName?: string;
+};
+
+export type UserData = {
+  createdAt: Date;
+  displayName: string;
+  email: string;
 };
 
 export const createUserDocumentFromAuth = async (
-  userAuth,
-  addtionalInfo = {}
-) => {
+  userAuth: User,
+  addtionalInfo = {} as AdditonalInfo
+): Promise<void | QueryDocumentSnapshot<UserData>> => {
   if (!userAuth) return;
 
   const userDocRef = doc(db, "users", userAuth.uid); // google ကပြန်ပို့လိုက်တဲ့ထဲမှာ uid က unique ဖြစ်တယ်။
@@ -96,32 +120,41 @@ export const createUserDocumentFromAuth = async (
     }
   }
 
-  return userSnapShot;
+  return userSnapShot as QueryDocumentSnapshot<UserData>;
 };
 
-export const createAuthWithEmailPassword = async (email, password) => {
+export const createAuthWithEmailPassword = async (
+  email: string,
+  password: string
+) => {
   if (!email || !password) return;
   return await createUserWithEmailAndPassword(auth, email, password);
 };
 
-export const signInUserWithEmailAndPassword = async (email, password) => {
+export const signInUserWithEmailAndPassword = async (
+  email: string,
+  password: string
+) => {
   if (!email || !password) return;
   return await signInWithEmailAndPassword(auth, email, password);
 };
 
 export const signOutUser = async () => await signOut(auth);
 
-export const onAuthStateChangedListener = async (callback) =>
-  onAuthStateChanged(auth, callback);
+export const onAuthStateChangedListener = async (
+  callback: NextOrObserver<User>
+) => onAuthStateChanged(auth, callback);
 
-export const getCurrentUser = () => {
+export const getCurrentUser = (): Promise<User | null> => {
   return new Promise((resolve, reject) => {
     const unsubscribe = onAuthStateChanged(
       auth,
-      (userAuth) => {unsubscribe(), resolve(userAuth)},
+      (userAuth) => {
+        unsubscribe(), resolve(userAuth);
+      },
       reject
-    )
-  })
-}
+    );
+  });
+};
 
 // onAuthStateChanged(auth, callback(run if success), callback(run if error));

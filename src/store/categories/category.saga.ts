@@ -1,4 +1,4 @@
-import { all, call, takeLatest, put } from "redux-saga/effects";
+import { all, call, takeLatest, put } from 'typed-redux-saga';
 
 import { getCategoriesAndDocs } from "../../utilities/firebase/firebase.utilis";
 
@@ -11,22 +11,22 @@ import { CATEGORY_ACTION_TYPES } from "./category.types";
 
 export function* fetchCategoriesAsync() { // worker saga
   try {
-    const categoryArray = yield call(getCategoriesAndDocs);
-    yield put(fetchCategoriesSuccess(categoryArray));
+    const categoryArray = yield* call(getCategoriesAndDocs);
+    yield* put(fetchCategoriesSuccess(categoryArray));
   } catch (err) {
-    yield put(fetchCategoriesFailed(err));
+    yield* put(fetchCategoriesFailed(err as Error));
   }
 }
 
 export function* onFetchCategories() { // watcher saga
-  yield takeLatest(
+  yield* takeLatest(
     CATEGORY_ACTION_TYPES.FETCH_CATEGORIES_START, // ဒါတွေ့ရင်
     fetchCategoriesAsync   // ဒီ worker saga ကိုခေါ်
   );
 }
 
 export function* categoriesSaga() { // start watcher saga
-  yield all([call(onFetchCategories)]);
+  yield* all([call(onFetchCategories)]);
 }
 
 // call => for async function. call(func, argu)

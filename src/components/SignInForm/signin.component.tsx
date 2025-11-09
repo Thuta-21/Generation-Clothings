@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, FormEvent, ChangeEvent } from "react";
 import FormInput from "../form-input/form-input.component";
 import Button, { BUTTON_TYPE_CLASSES } from "../Botton/button.compoent";
 import {
@@ -21,12 +21,11 @@ const SignIn = () => {
   const [formData, setFormData] = useState(defaultSignInForm);
   const { email, password } = formData;
   const dispatch = useDispatch();
-
   const resetForm = () => {
     setFormData(defaultSignInForm);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       dispatch(emailSiginInStart(email, password));
@@ -36,7 +35,7 @@ const SignIn = () => {
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
@@ -87,8 +86,8 @@ const SignIn = () => {
             color: "blue",
           }}
           onClick={() => {
-            const siginIn = document.getElementById("signin");
-            const signup = document.getElementById("signup");
+            const siginIn = document.getElementById("signin") as HTMLElement;
+            const signup = document.getElementById("signup") as HTMLElement;
             siginIn.style.display = "none";
             signup.style.display = "block";
           }}

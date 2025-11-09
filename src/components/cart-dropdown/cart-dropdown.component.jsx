@@ -5,11 +5,11 @@ import {
 } from "./cart-dropdown.style.jsx";
 import Button, { BUTTON_TYPE_CLASSES } from "../Botton/button.compoent";
 import { useSelector } from "react-redux";
-import { selectCartItems } from "../../store/cart/cart.selector.jsx";
+import { selectCartItems } from "../../store/cart/cart.selector";
 import CartItem from "../cart-item/cart-item.component";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setIsCartOpen } from "../../store/cart/cart.actions.jsx";
+import { setIsCartOpen } from "../../store/cart/cart.actions";
 
 const CartDropdown = () => {
   const navigate = useNavigate();

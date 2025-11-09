@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, FormEvent, ChangeEvent } from "react";
 import FormInput from "../form-input/form-input.component";
 import { SignupContainer } from "./sign-up.style";
 import Button from "../Botton/button.compoent";
@@ -19,7 +19,7 @@ const SignUp = () => {
     setFormData(defaultSignUpForm);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
@@ -35,7 +35,7 @@ const SignUp = () => {
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
@@ -89,8 +89,8 @@ const SignUp = () => {
             color: "blue",
           }}
           onClick={() => {
-            const siginIn = document.getElementById("signin");
-            const signup = document.getElementById("signup");
+            const siginIn = document.getElementById("signin") as HTMLElement;
+            const signup = document.getElementById("signup") as HTMLElement;
             siginIn.style.display = "block";
             signup.style.display = "none";
           }}

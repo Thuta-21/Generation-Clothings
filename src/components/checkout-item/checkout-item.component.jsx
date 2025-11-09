@@ -10,7 +10,7 @@ import {
 } from "./checkout-item.style.jsx";
 import { addItemToCart, removeItemFromCart, clearItemFromCart } from "../../store/cart/cart.actions";
 import { useDispatch, useSelector } from "react-redux";
-import { selectCartItems } from "../../store/cart/cart.selector.jsx";
+import { selectCartItems } from "../../store/cart/cart.selector";
 
 const CheckoutItem = ({ product }) => {
   const dispatch = useDispatch();
