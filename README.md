@@ -1,13 +1,13 @@
-# Generation Clothing
-•	Built with React Vite and TypeScript
+# 👕 Generation Clothing
 
-•	Authentication System, database and payment system
+-  Built with React, Vite, and TypeScript
 
-•	Design with SCSS
+-  Implemented authentication, database, and payment systems
 
-•	Backend using BaaS like Firebase
+-  Designed using SCSS
 
-•	State Management using Redux Saga
+-  Backend powered by Firebase (BaaS)
 
-•	Payment with Stripe API
+-  Managed state with Redux-Saga
 
+-  Integrated Stripe API for secure payments
